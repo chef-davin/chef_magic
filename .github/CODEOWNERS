@@ -1,1 +1,6 @@
-* @chef-cookbooks/cookbook_engineering_team
+* @chef-davin @sam1el
+.github/* @chef-cookbooks/cookbook_engineering_team
+.delivery/* @chef-cookbooks/cookbook_engineering_team
+.expediter/* @chef-cookbooks/cookbook_engineering_team
+kitchen* @chef-cookbooks/cookbook_engineering_team
+.vscode/* @chef-cookbooks/cookbook_engineering_team

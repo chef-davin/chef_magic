@@ -17,7 +17,7 @@ run_list 'chef_magic'
 cookbook 'chef_magic', path: '.'
 cookbook 'test', path: './test/cookbooks/test'
 
-tests = (Dir.entries('./test/fixtures/cookbooks/test/recipes').select { |f| !File.directory? f })
+tests = (Dir.entries('./test/cookbooks/test/recipes').select { |f| !File.directory? f })
 tests.each do |test|
   test = test.gsub('.rb', '')
   named_run_list :"#{test.to_sym}", "test::#{test}"
