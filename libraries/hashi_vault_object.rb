@@ -17,11 +17,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-require 'vault'
+include vault
 
 module ChefMagic
   module HashiVaultObjectHelpers
-    include 'vault'
+
     def get_hashi_vault_object(vault_path, vault_address, vault_token, vault_role = nil)
       # Need to set the vault address
       Vault.address = vault_address
