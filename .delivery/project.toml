@@ -20,8 +20,8 @@ smoke = "echo skipping"
 # The functional phase is optional, you can define it by uncommenting
 # the line below and running the command: `delivery local functional`
 # functional = ""
+functional = "echo skipping"
 cleanup = "echo skipping"
-
 # Remote project.toml file
 #
 # Instead of the local phases above, you may specify a remote URI location for
