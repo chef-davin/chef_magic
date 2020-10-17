@@ -19,25 +19,17 @@
 
 module ResourceDevelopment
   module FilesystemHelpers
+
+    # Return the windows %SystemRoot% registry entry.
     #
-    # Define the methods that you would like to assist the work you do in recipes,
-    # resources, or templates.
+    # @return [String]
     #
-    # def my_helper_method
-    #   # help method implementation
-    # end
-    def system_root?
-      sysroot = ''
-      if windows?
-        values = registry_get_values('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion')
-        values.each do |reg_key|
-          next unless reg_key[:name] == 'SystemRoot'
-          sysroot = reg_key[:value]
-        end
-      else
-        sysroot = '/'
-      end
-      sysroot
+    def system_root
+      return '/' unless windows?
+
+      values = registry_get_values('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion')
+      key = values.find { |k| k[:name] == 'SystemRoot' }
+      key[:value]
     end
   end
 end
