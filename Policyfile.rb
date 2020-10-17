@@ -10,7 +10,7 @@ name 'chef_magic'
 default_source :supermarket
 
 # run_list: chef-client will run these recipes in the order specified.
-run_list 'chef_magic'
+run_list 'test'
 
 # Specify a custom source for a single cookbook:
 # cookbook 'example_cookbook', path: '../cookbooks/example_cookbook'
