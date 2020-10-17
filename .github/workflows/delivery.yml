@@ -30,17 +30,17 @@
             - 'centos-7'
             - 'centos-8'
             - 'fedora-latest'
-            - 'freebsd-12'
+            # - 'freebsd-12'
             - 'ubuntu-1604'
             - 'ubuntu-1804'
             - 'ubuntu-2004'
             - 'opensuse-leap-15'
-            - 'macos-10.15'
+            # - 'macos-10.15'
 
           suite:
-            - 'bsd'
+            # - 'bsd'
             - 'linux'
-            - 'macos'
+            # - 'macos'
         fail-fast: false
 
       steps:

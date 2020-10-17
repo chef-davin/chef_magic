@@ -45,9 +45,9 @@ platforms:
       box: tas50/windows_2012r2
 
 suites:
-- name: bsd
-  named_run_list: bsd
-  includes: ["freebsd-12"]
+# - name: bsd
+#   named_run_list: bsd
+#   includes: ["freebsd-12"]
 
 - name: linux
   named_run_list: linux
