@@ -88,7 +88,7 @@
           env:
             CHEF_LICENSE: accept-no-persist
 
-    mocos:
+    macos:
       needs: [delivery]
       runs-on: macos-10.15
       strategy:
@@ -109,14 +109,14 @@
           shell: bash
         - name: Add Chef Workstation to PATH
           run: echo "##[add-path]\opscode\chef-workstation\bin\;"
-          shell: shell
+          shell: bash
         - name: Chef Infra Client Run
           run: chef-solo -c test/solo.rb -o "test::${{ matrix.suite }}"
-          shell: shell
+          shell: bash
           env:
             CHEF_LICENSE: accept-no-persist
         - name: Integration Testing
           run: inspec exec test\integration\${{ matrix.suite }}\default_spec.rb
-          shell: shell
+          shell: bash
           env:
             CHEF_LICENSE: accept-no-persist
