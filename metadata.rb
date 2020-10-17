@@ -9,3 +9,5 @@ chef_version '>= 15.0'
 
 issues_url 'https://github.com/chef-davin/chef_magic/issues'
 source_url 'https://github.com/chef-davin/chef_magic'
+
+gem 'vault'

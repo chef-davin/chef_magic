@@ -30,7 +30,7 @@ module ChefMagic
         hash[key]
       elsif hash.respond_to?(:each)
         r = nil
-        hash.find { |*a| r = find_value(a.last, key) }
+        hash.find { |*a| r = find_hash_value(a.last, key) }
         r
       end
     end
@@ -40,7 +40,7 @@ module ChefMagic
     #   If you don't want to overwite your node object completely,
     #   then you should probably use one of the other methods here
     def merge_override_hash(hash_src, hash_dest)
-      deep_merge!(hash_src, hash_dest)
+      ::Chef::Mixin::DeepMerge.deep_merge!(hash_src, hash_dest)
     end
 
     def load_override_file(file_path)
