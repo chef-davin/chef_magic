@@ -21,7 +21,6 @@ include vault
 
 module ChefMagic
   module HashiVaultObjectHelpers
-
     def get_hashi_vault_object(vault_path, vault_address, vault_token, vault_role = nil)
       # Need to set the vault address
       Vault.address = vault_address
