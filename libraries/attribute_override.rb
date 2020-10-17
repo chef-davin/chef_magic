@@ -19,7 +19,7 @@
 
 require 'json'
 require 'yaml'
-require 'json'
+require 'toml'
 
 module ChefMagic
   module AttributeOverride
