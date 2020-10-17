@@ -40,7 +40,7 @@
           suite:
             - 'bsd'
             - 'linux'
-            - 'osx'
+            - 'macos'
         fail-fast: false
 
       steps:

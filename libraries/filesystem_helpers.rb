@@ -17,48 +17,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module ResourceDevelopment
+module ChefMagic
   module FilesystemHelpers
+    # Return the windows %SystemRoot% registry entry.
     #
-    # Define the methods that you would like to assist the work you do in recipes,
-    # resources, or templates.
+    # @return [String]
     #
-    # def my_helper_method
-    #   # help method implementation
-    # end
-    def system_root?
-      sysroot = ''
-      if windows?
-        values = registry_get_values('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion')
-        values.each do |reg_key|
-          next unless reg_key[:name] == 'SystemRoot'
-          sysroot = reg_key[:value]
-        end
-      else
-        sysroot = '/'
-      end
-      sysroot
+    def system_root
+      return '/' unless windows?
+
+      values = registry_get_values('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion')
+      key = values.find { |k| k[:name] == 'SystemRoot' }
+      key[:value]
     end
   end
 end
 
-#
-# The module you have defined may be extended within the recipe to grant the
-# recipe the helper methods you define.
-#
-# Within your recipe you would write:
-#
-#     extend ResourceDevelopment::ResourceHelpersHelpers
-#
-#     my_helper_method
-#
-# You may also add this to a single resource within a recipe:
-#
-#     template '/etc/app.conf' do
-#       extend ResourceDevelopment::ResourceHelpersHelpers
-#       variables specific_key: my_helper_method
-#     end
-#
-Chef::Resource.include ::ResourceDevelopment::FilesystemHelpers
-Chef::DSL::Recipe.include ::ResourceDevelopment::FilesystemHelpers
-Chef::Node.include ::ResourceDevelopment::FilesystemHelpers
+Chef::DSL::Universal.include ::ChefMagic::FilesystemHelpers

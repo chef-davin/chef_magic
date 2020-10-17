@@ -18,7 +18,7 @@
 # limitations under the License.
 
 require 'yaml'
-require 'toml-rb'
+require 'tomlrb'
 
 module ChefMagic
   module AttributeOverride
@@ -47,11 +47,11 @@ module ChefMagic
       if file_path =~ %r{(/|C:\\).*(.json|.yaml|.yml|.toml)}i
         case File.extname(file_path)
         when /(.yaml|.yml)/i
-          all_attributes = YAML.parse(file_path)
+          all_attributes = YAML.load_file(file_path)
         when /.json/i
           all_attributes = JSON.parse(::File.read(file_path))
         when /.toml/i
-          all_attributes = TOML.parse(file_path)
+          all_attributes = Tomlrb.load_file(file_path)
         end
         all_attributes
       else
@@ -94,6 +94,4 @@ module ChefMagic
   end
 end
 
-Chef::Resource.include ::ChefMagic::AttributeOverride
-Chef::DSL::Recipe.include ::ChefMagic::AttributeOverride
-Chef::Node.include ::ChefMagic::AttributeOverride
+Chef::DSL::Universal.include ::ChefMagic::AttributeOverride

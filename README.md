@@ -48,7 +48,7 @@ end
 
 This will extract a value from an override file and compare it to a value of the same key from the node object. If the override key/value exists, this will return the value from the overrides file rather than the corresponding node object.
 
-#### This method takes four values, but the fourth is optional as there are defaults:
+#### This method takes four values, but the fourth is optional as there are defaults
 
 **first_node_hash_key**:
 This represents the top-level node-attribute you might be trying to override. In most attribute files, this is usually the name of the cookbook (`node['cookbook_name']`).

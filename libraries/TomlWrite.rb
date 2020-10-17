@@ -114,3 +114,5 @@ module ChefMagic
     end
   end
 end
+
+Chef::DSL::Universal.include ::ChefMagic::TomlWrite
