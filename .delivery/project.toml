@@ -14,13 +14,13 @@ lint = "chef exec cookstyle"
 # foodcritic has been deprecated in favor of cookstyle so we skip the syntax
 # phase now.
 syntax = "echo skipping syntax phase. Use lint phase instead."
-provision = "chef exec kitchen create"
-deploy = "chef exec kitchen converge"
-smoke = "chef exec kitchen verify"
+provision = "echo skipping"
+deploy = "echo skipping"
+smoke = "echo skipping"
 # The functional phase is optional, you can define it by uncommenting
 # the line below and running the command: `delivery local functional`
 # functional = ""
-cleanup = "chef exec kitchen destroy"
+cleanup = "echo skipping"
 
 # Remote project.toml file
 #
