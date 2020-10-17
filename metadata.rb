@@ -1,19 +1,11 @@
 name 'chef_magic'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
-license 'All Rights Reserved'
-description 'Installs/Configures chef_magic'
+maintainer 'Davin Taddeo'
+maintainer_email 'davin@chef.io'
+maintainer_email 'davin@davintaddeo.com'
+license 'Apache-2.0'
+description 'Provides tools to help users scale their use of Chef by providing functions and resources that can impove the ease at which exceptions and overrides can be provided to the chef-client run'
 version '0.1.0'
 chef_version '>= 15.0'
 
-# The `issues_url` points to the location where issues for this cookbook are
-# tracked.  A `View Issues` link will be displayed on this cookbook's page when
-# uploaded to a Supermarket.
-#
-# issues_url 'https://github.com/<insert_org_here>/chef_magic/issues'
-
-# The `source_url` points to the development repository for this cookbook.  A
-# `View Source` link will be displayed on this cookbook's page when uploaded to
-# a Supermarket.
-#
-# source_url 'https://github.com/<insert_org_here>/chef_magic'
+issues_url 'https://github.com/chef-davin/chef_magic/issues'
+source_url 'https://github.com/chef-davin/chef_magic'

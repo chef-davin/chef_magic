@@ -2,31 +2,85 @@
 driver:
   name: vagrant
 
-## The forwarded_port port feature lets you connect to ports on the VM guest via
-## localhost on the host.
-## see also: https://www.vagrantup.com/docs/networking/forwarded_ports.html
-
-#  network:
-#    - ["forwarded_port", {guest: 80, host: 8080}]
-
 provisioner:
   name: chef_zero
-
-  ## product_name and product_version specifies a specific Chef product and version to install.
-  ## see the Chef documentation for more details: https://docs.chef.io/workstation/config_yml_kitchen/
-  #  product_name: chef
-  #  product_version: 16
+  deprecations_as_errors: true
+  chef_license: accept-no-persist
+  # log_level: :debug
 
 verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
+  - name: amazonlinux-2
+  - name: centos-6
+  - name: centos-7
   - name: centos-8
+  - name: debian-9
+  - name: debian-10
+  - name: fedora-latest
+  - name: freebsd-12
+  - name: opensuse-leap-15
+  - name: ubuntu-16.04
+  - name: ubuntu-18.04
+  - name: ubuntu-20.04
+  - name: macos-10.15
+    driver:
+      box: tas50/macos_10.15
+  - name: windows-2019
+    transport:
+      name: winrm
+      elevated: true
+    driver:
+      box: tas50/windows_2019
+      gui: false
+      customize:
+        memory: 2048
+  - name: windows-2016
+    transport:
+      name: winrm
+      elevated: true
+    driver:
+      box: tas50/windows_2016
+      gui: false
+      customize:
+        memory: 2048
+  - name: windows-2012r2-13
+    provisioner:
+      product_name: chef
+      product_version: 13
+    driver:
+      box: tas50/windows_2012r2
+    transport:
+      name: winrm
+      elevated: true
+  - name: windows-2012r2-14
+    provisioner:
+      product_name: chef
+      product_version: 14
+    driver:
+      box: tas50/windows_2012r2
+    transport:
+      name: winrm
+      elevated: true
 
 suites:
-  - name: default
-    verifier:
-      inspec_tests:
-        - test/integration/default
-    attributes:
+- name: bsd
+  run_list:
+    - recipe[test::bsd]
+  includes: ["freebsd-12"]
+
+- name: linux
+  run_list:
+    - recipe[test::linux]
+  excludes: ["windows-2012r2-13", "windows-2012r2-14", "windows-2016", "windows-2019", "macos-10.15", "freebsd-12"]
+
+- name: windows
+  run_list:
+    - recipe[test::windows]
+  includes: ["windows-2012r2-13", "windows-2012r2-14", "windows-2016", "windows-2019"]
+
+- name: osx
+  run_list:
+    - recipe[test::macos]
+  includes: ["macos-10.15"]
