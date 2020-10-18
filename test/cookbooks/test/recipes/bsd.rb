@@ -1,3 +1,8 @@
+chef_gem 'vault' do
+  compile_time true
+  action :install
+end
+
 %w( json toml yaml ).each do |i|
   override_file = "/tmp/override_file.#{i}"
   cookbook_file override_file do

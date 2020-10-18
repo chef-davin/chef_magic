@@ -1,9 +1,13 @@
+chef_gem 'vault' do
+  compile_time true
+  action :install
+end
+
 %w( json toml yml ).each do |i|
   override_file = "C:\\override_file.#{i}"
   cookbook_file override_file do
     compile_time true
     source "override_file.#{i}"
-    cookbook 'chef_magic'
   end
   override_hash = load_override_file(override_file)
 
