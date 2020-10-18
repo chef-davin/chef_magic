@@ -1,0 +1,13 @@
+{
+  "override": {
+    "fortune": {
+      "favorsthebold" : "In a JSON file",
+      "sometimes_favors_the_bold": {
+        "on_a_tuesday": "or a Wednesday"
+      }
+    },
+    "my_favorite": {
+      "things": "rainbows"
+    }
+  }
+}

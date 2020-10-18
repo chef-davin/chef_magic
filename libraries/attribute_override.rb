@@ -17,9 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'json'
 require 'yaml'
-require 'toml'
+require 'tomlrb'
 
 module ChefMagic
   module AttributeOverride
@@ -31,7 +30,7 @@ module ChefMagic
         hash[key]
       elsif hash.respond_to?(:each)
         r = nil
-        hash.find { |*a| r = find_value(a.last, key) }
+        hash.find { |*a| r = find_hash_value(a.last, key) }
         r
       end
     end
@@ -41,7 +40,7 @@ module ChefMagic
     #   If you don't want to overwite your node object completely,
     #   then you should probably use one of the other methods here
     def merge_override_hash(hash_src, hash_dest)
-      deep_merge!(hash_src, hash_dest)
+      ::Chef::Mixin::DeepMerge.deep_merge!(hash_src, hash_dest)
     end
 
     def load_override_file(file_path)
@@ -50,9 +49,9 @@ module ChefMagic
         when /(.yaml|.yml)/i
           all_attributes = YAML.load_file(file_path)
         when /.json/i
-          all_attributes = JSON.load(::File.new(file_path, 'r'))
+          all_attributes = JSON.parse(::File.read(file_path))
         when /.toml/i
-          all_attributes = TOML.load_file(file_path)
+          all_attributes = Tomlrb.load_file(file_path)
         end
         all_attributes
       else
@@ -64,7 +63,7 @@ module ChefMagic
     #   to a value of the same key from the node object. If the override
     #   key/value exists, this will return the value from the overrides file
     #   rather than the corresponding node object.
-    def get_override_file_value(first_node_key, first_override_key, returned_key, override_file = nil )
+    def get_override_file_value(first_node_key, first_override_key, returned_key, override_file = nil)
       # Parse the arguments passed to determine whether a file was given as the first argument
       if override_file =~ %r{(/|C:\\).*(.json|.yaml|.yml|.toml)}i
         file = override_file
@@ -95,6 +94,4 @@ module ChefMagic
   end
 end
 
-Chef::Resource.include ::ChefMagic::AttributeOverride
-Chef::DSL::Recipe.include ::ChefMagic::AttributeOverride
-Chef::Node.include ::ChefMagic::AttributeOverride
+Chef::DSL::Universal.include ::ChefMagic::AttributeOverride

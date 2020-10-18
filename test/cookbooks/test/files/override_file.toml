@@ -1,0 +1,7 @@
+[override]
+  [override.fortune]
+    favorsthebold = "In a TOML file"
+    [override.fortune.sometimes_favors_the_bold]
+      on_a_tuesday = 'or a Friday'
+  [override.my_favorite]
+    things = 'blue skies'

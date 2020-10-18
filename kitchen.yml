@@ -1,6 +1,10 @@
 ---
 driver:
   name: vagrant
+  customize:
+    memory: 2048
+  gui: false
+
 
 provisioner:
   name: chef_zero
@@ -28,59 +32,31 @@ platforms:
     driver:
       box: tas50/macos_10.15
   - name: windows-2019
-    transport:
-      name: winrm
-      elevated: true
     driver:
       box: tas50/windows_2019
-      gui: false
-      customize:
-        memory: 2048
   - name: windows-2016
-    transport:
-      name: winrm
-      elevated: true
     driver:
       box: tas50/windows_2016
-      gui: false
-      customize:
-        memory: 2048
-  - name: windows-2012r2-13
+  - name: windows-2012r2-15
     provisioner:
       product_name: chef
-      product_version: 13
+      product_version: 15
     driver:
       box: tas50/windows_2012r2
-    transport:
-      name: winrm
-      elevated: true
-  - name: windows-2012r2-14
-    provisioner:
-      product_name: chef
-      product_version: 14
-    driver:
-      box: tas50/windows_2012r2
-    transport:
-      name: winrm
-      elevated: true
 
 suites:
-- name: bsd
-  run_list:
-    - recipe[test::bsd]
-  includes: ["freebsd-12"]
+# - name: bsd
+#   named_run_list: bsd
+#   includes: ["freebsd-12"]
 
 - name: linux
-  run_list:
-    - recipe[test::linux]
+  named_run_list: linux
   excludes: ["windows-2012r2-13", "windows-2012r2-14", "windows-2016", "windows-2019", "macos-10.15", "freebsd-12"]
 
 - name: windows
-  run_list:
-    - recipe[test::windows]
+  named_run_list: windows
   includes: ["windows-2012r2-13", "windows-2012r2-14", "windows-2016", "windows-2019"]
 
-- name: osx
-  run_list:
-    - recipe[test::macos]
+- name: macos
+  named_run_list: macos
   includes: ["macos-10.15"]
