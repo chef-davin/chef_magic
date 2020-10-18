@@ -3,7 +3,7 @@ chef_gem 'vault' do
   action :install
 end
 
-%w( json toml yml ).each do |i|
+%w( json toml yaml ).each do |i|
   override_file = "C:\\override_file.#{i}"
   cookbook_file override_file do
     compile_time true

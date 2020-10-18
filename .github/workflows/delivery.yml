@@ -116,7 +116,7 @@
           env:
             CHEF_LICENSE: accept-no-persist
         - name: Integration Testing
-          run: inspec exec test\integration\${{ matrix.suite }}\default_spec.rb
+          run: inspec exec test/integration/${{ matrix.suite }}/default_spec.rb
           shell: bash
           env:
             CHEF_LICENSE: accept-no-persist
