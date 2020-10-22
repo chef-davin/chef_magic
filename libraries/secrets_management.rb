@@ -31,7 +31,6 @@ module ChefMagic
       req['Content-Type'] = 'application/x-www-form-urlencoded'
       req.body = "grant_type=client_credentials&client_id=#{client_id}&client_secret=#{client_secret}&resource=#{resource}"
       get_token = JSON.parse(checkout.request(req).body)
-      puts get_token
       (get_token['access_token'] || {}).to_s
     # I removed the 200 check because it is in a rescue block so either JSON parse it or rescue and return empty object
     rescue
