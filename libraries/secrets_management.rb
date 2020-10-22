@@ -2,9 +2,9 @@
 # Author:: Paul Bradford (<pbradford@chef.io>)
 # Author:: Davin Taddeo (<davin@davintaddeo.com>)
 # Cookbook:: chef_magic
-# Library:: hashi_vault_object
+# Library:: secrets_management
 #
-# Copyright:: 2019-2020, Paul Bradford
+# Copyright:: 2019-2020, Davin Taddeo
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,10 +45,20 @@ module ChefMagic
       akv_token(client_id, client_secret, tenant_id)
     end
 
-    def akv_secret(secret_id, client_id, client_secret, tenant, vault, secret_name)
+    def akv_secret(client_id, client_secret, tenant, vault, secret_name, secret_version = '')
       api_token = akv_token(client_id, client_secret, tenant)
-      secret_uri = URI.parse("https://#{vault}.vault.azure.net/secrets/#{secret_name}/#{secret_id}?api-version=7.0")
+      secret_uri = URI.parse("https://#{vault}.vault.azure.net/secrets/#{secret_name}/#{secret_version}?api-version=7.0")
       header = { 'Authorization' => "Bearer #{api_token}", 'Content-Type' => 'application/json' }
+      retrieve = Net::HTTP.new(secret_uri.host, secret_uri.port)
+      retrieve.use_ssl = true if secret_uri.to_s.include?('https')
+      get_secret_request = retrieve.get(secret_uri, header)
+      get_secret = JSON.parse(get_secret_request.body)
+      (get_secret['value'] || {}).to_s
+    end
+
+    def akv_token_secret(token, vault, secret_name, secret_version = '')
+      secret_uri = URI.parse("https://#{vault}.vault.azure.net/secrets/#{secret_name}/#{secret_version}?api-version=7.0")
+      header = { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json' }
       retrieve = Net::HTTP.new(secret_uri.host, secret_uri.port)
       retrieve.use_ssl = true if secret_uri.to_s.include?('https')
       get_secret_request = retrieve.get(secret_uri, header)
