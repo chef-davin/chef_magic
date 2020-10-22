@@ -18,9 +18,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 require 'vault'
+require 'tomlrb'
 
 module ChefMagic
-  module HashiVaultObjectHelpers
+  module SecretsManagementHelpers
+    def akv_token(client_id, client_secret, tenant)
+      token_uri = URI.parse("https://login.microsoftonline.com/#{tenant}/oauth2/token")
+      resource = 'https://vault.azure.net'
+      checkout = Net::HTTP.new(token_uri.host, token_uri.port)
+      checkout.use_ssl = true
+      req = Net::HTTP::Post.new(token_uri)
+      req['Content-Type'] = 'application/x-www-form-urlencoded'
+      req.body = "grant_type=client_credentials&client_id=#{client_id}&client_secret=#{client_secret}&resource=#{resource}"
+      get_token = JSON.parse(checkout.request(req).body)
+      puts get_token
+      (get_token['access_token'] || {}).to_s
+    rescue
+      {}
+    end
+
+    def akv_token_using_credentials_file(subscription_id, credentials_file)
+      credentials_hash['azure_credentials'] = Tomlrb.load_file(credentials_file)
+      client_id = credentials_hash['azure_credentials'][subscription_id]['client_id']
+      client_secret = credentials_hash['azure_credentials'][subscription_id]['client_secret']
+      tenant_id = credentials_hash['azure_credentials'][subscription_id]['tenant_id']
+
+      akv_token(client_id, client_secret, tenant_id)
+    end
+
     def get_hashi_vault_object(vault_path, vault_address, vault_token, vault_role = nil)
       # Need to set the vault address
       Vault.address = vault_address
@@ -47,4 +72,4 @@ module ChefMagic
   end
 end
 
-Chef::DSL::Universal.include ::ChefMagic::HashiVaultObjectHelpers
+Chef::DSL::Universal.include ::ChefMagic::SecretsManagementHelpers
