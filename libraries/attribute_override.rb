@@ -59,6 +59,65 @@ module ChefMagic
       end
     end
 
+    # This will call a URL to load override data rather than a path on the local filesystem.
+    #   url:      Full URL including protocol to invoke.  Example: http://some.web.site/uridata?optional=parameters
+    #   method:   HTTP method to use. This is an optional value and will default to GET.
+    #   header:   Header data in hash(key=>value) format to be passed to URL.
+    #   body:     Body contents to be passed to url in STRING format.
+    def load_override_url(url, method, header, body)
+      uri = URI(url)
+      method = (method.downcase() || 'get')
+      headers = (header || nil)
+      body = (body || nil)
+      case method
+      when 'post'
+      begin
+        apiurl = node.run_state['apiurl'].to_s
+        token = node.run_state['api_auth_token']['token']
+        # POST body object as ruby hash
+        object = {
+          'ci' => hostname,
+          'patch_status' => node.run_state['epm']['patch_status'],
+          'request' => node.run_state['epm']['patch_request_number'],
+        }
+        if details
+          object['client_status_detail'] = details
+        end
+        url = URI("#{apiurl}/epm/patch_data/ci/#{clean_hostname()}")
+        http = Net::HTTP.new(url.host, url.port)
+        http.use_ssl = true if http.port.to_s.include?('443')
+        req = Net::HTTP::Post.new(url)
+        req['Authorization'] = ["Bearer #{token}"]
+        req['Content-Type'] = ['application/json']
+        req.body = object.to_json
+        http.request(req)
+      rescue
+        # TODO: add logic for a retry of status POST
+        puts
+        puts 'There was an error sending POST to EPM API with status update'
+      end
+      when get
+      begin
+        node.run_state['epm'] = {} unless node.run_state['epm']
+        apiurl = node.run_state['apiurl'].to_s
+        token = node.run_state['api_auth_token']['token']
+        uri = URI("#{apiurl}/epm/enrollment/ci/#{clean_hostname()}")
+        headers = { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true if http.port.to_s.include?('443')
+        req = http.get(uri, headers)
+        epm_api_response = if req.code.to_i == 200
+                             JSON.parse(req.body)
+                           else
+                             []
+                           end
+      rescue
+        epm_api_response = []
+      end
+      else
+        puts "method #{method} was specified but no action exists for this method.  Did you mean get/put/post?"
+    end
+
     # This will extract a value from an override file and compare it
     #   to a value of the same key from the node object. If the override
     #   key/value exists, this will return the value from the overrides file
