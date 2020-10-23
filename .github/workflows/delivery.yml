@@ -53,6 +53,10 @@
           env:
             CHEF_LICENSE: accept-no-persist
             KITCHEN_LOCAL_YAML: kitchen.dokken.yml
+            AZK_CLIENT_ID: ${{ secrets.AZK_CLIENT_ID }}
+            AZK_CLIENT_SECRET: ${{ secrets.AZK_CLIENT_SECRET }}
+            AZK_TENANT_ID: ${{ secrets.AZK_TENANT_ID }}
+            AZK_SUBSCRIPTION_ID: ${{ secrets.AZK_SUBSCRIPTION_ID }}
           with:
             suite: ${{ matrix.suite }}
             os: ${{ matrix.os }}
@@ -82,6 +86,10 @@
           shell: powershell
           env:
             CHEF_LICENSE: accept-no-persist
+            AZK_CLIENT_ID: ${{ secrets.AZK_CLIENT_ID }}
+            AZK_CLIENT_SECRET: ${{ secrets.AZK_CLIENT_SECRET }}
+            AZK_TENANT_ID: ${{ secrets.AZK_TENANT_ID }}
+            AZK_SUBSCRIPTION_ID: ${{ secrets.AZK_SUBSCRIPTION_ID }}
         # - name: Integration Testing
         #   run: inspec exec test\integration\${{ matrix.suite }}\default_spec.rb
         #   shell: powershell
@@ -115,6 +123,10 @@
           shell: bash
           env:
             CHEF_LICENSE: accept-no-persist
+            AZK_CLIENT_ID: ${{ secrets.AZK_CLIENT_ID }}
+            AZK_CLIENT_SECRET: ${{ secrets.AZK_CLIENT_SECRET }}
+            AZK_TENANT_ID: ${{ secrets.AZK_TENANT_ID }}
+            AZK_SUBSCRIPTION_ID: ${{ secrets.AZK_SUBSCRIPTION_ID }}
         # - name: Integration Testing
         #   run: inspec exec test/integration/${{ matrix.suite }}/default_spec.rb
         #   shell: bash

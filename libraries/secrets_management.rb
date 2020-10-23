@@ -1,4 +1,5 @@
 #
+# Author:: Jeff Brimager
 # Author:: Paul Bradford (<pbradford@chef.io>)
 # Author:: Davin Taddeo (<davin@davintaddeo.com>)
 # Cookbook:: chef_magic
@@ -45,7 +46,7 @@ module ChefMagic
       akv_token(client_id, client_secret, tenant_id)
     end
 
-    def akv_secret(client_id, client_secret, tenant, vault, secret_name, secret_version = '')
+    def akv_fetch_secret(client_id, client_secret, tenant, vault, secret_name, secret_version = '')
       api_token = akv_token(client_id, client_secret, tenant)
       secret_uri = URI.parse("https://#{vault}.vault.azure.net/secrets/#{secret_name}/#{secret_version}?api-version=7.0")
       header = { 'Authorization' => "Bearer #{api_token}", 'Content-Type' => 'application/json' }
@@ -56,7 +57,7 @@ module ChefMagic
       (get_secret['value'] || {}).to_s
     end
 
-    def akv_token_secret(token, vault, secret_name, secret_version = '')
+    def akv_fetch_secret_with_token(token, vault, secret_name, secret_version = '')
       secret_uri = URI.parse("https://#{vault}.vault.azure.net/secrets/#{secret_name}/#{secret_version}?api-version=7.0")
       header = { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json' }
       retrieve = Net::HTTP.new(secret_uri.host, secret_uri.port)
@@ -64,6 +65,23 @@ module ChefMagic
       get_secret_request = retrieve.get(secret_uri, header)
       get_secret = JSON.parse(get_secret_request.body)
       (get_secret['value'] || {}).to_s
+    end
+
+    def akv_fetch_vault_secrets(token, vault)
+      vault_uri = URI.parse("https://#{vault}.vault.azure.net/secrets?api-version=7.1")
+      header = { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json' }
+      retrieve = Net::HTTP.new(vault_uri.host, vault_uri.port)
+      retrieve.use_ssl = true if vault_uri.to_s.include?('https')
+      get_vault_request = retrieve.get(vault_uri, header)
+      get_vault = JSON.parse(get_vault_request.body)
+      my_vault = {}
+      this_vault = get_vault['value']
+      this_vault.each do |secret|
+        secret_name = secret['id'].split('/')[-1]
+        secret_value = akv_fetch_secret_with_token(token, vault, secret_name)
+        my_vault[secret_name]= secret_value
+      end
+      my_vault
     end
 
     def get_hashi_vault_object(vault_path, vault_address, vault_token, vault_role = nil)
