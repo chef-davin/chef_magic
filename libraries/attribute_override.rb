@@ -59,63 +59,92 @@ module ChefMagic
       end
     end
 
-    # This will call a URL to load override data rather than a path on the local filesystem.
-    #   url:      Full URL including protocol to invoke.  Example: http://some.web.site/uridata?optional=parameters
-    #   method:   HTTP method to use. This is an optional value and will default to GET.
-    #   header:   Header data in hash(key=>value) format to be passed to URL.
-    #   body:     Body contents to be passed to url in STRING format.
-    def load_override_url(url, method, header, body)
-      uri = URI(url)
-      method = (method.downcase() || 'get')
-      headers = (header || nil)
-      body = (body || nil)
+    # load_override_url - This will call a URL to load override data in JSON format rather than a path on the local filesystem.
+    # Arguments should be provided in hash format:
+    #   load_override_url({
+    #     'url'     => 'http://some.web.site/uridata?optional=parameters',
+    #     'method'  => 'GET',
+    #     'header'  => { 'Content-Type' => 'application/json' },
+    #     'body'    => { 'some_key' => 'some_value' }'
+    #   })
+    #   url:      Required - Full URL including protocol to invoke.
+    #   method:   Optional - GET or POST method, will default to GET if no body is present and POST if a body is present.
+    #   header:   Optional - header data in hash(key=>value) format for JSON or string format to be passed to URL.
+    #   body:     Optional - body contents to be passed to url in STRING format.
+    def load_override_url(hash)
+      # Should not be needed to require net/http within Chef Infra client run, but being paranoid.
+      require 'net/http'
+      # Test if a valid Ruby hash was passed as the arguments
+      if hash.class != Hash
+        # Reply with a helpful error on why this is failing.
+        err = <<~HASHERR
+           load_override_url() method requires arguments to be passed in a Ruby hash:
+           load_override_url({
+               'url'     => 'http://some.web.site/uridata?optional=parameters',
+               'method'  => 'GET',
+               'header'  => { 'Content-Type' => 'application/json' },
+               'body'    => { 'some_key' => 'some_value' }'
+             })
+        HASHERR
+        raise err
+      end
+      # Make sure that there was a url included in the argument hash
+      raise 'url is required for load_override_url' unless hash['url']
+      # Parse the Net::HTTP URI from the provided url
+      url = URI(hash['url'])
+      # Take the method that was passed as an argument or guess what it is if no method was passed
+      method = if hash['method']
+                 hash['method'].downcase()
+               elsif hash['body']
+                 'post'
+               else
+                 'get'
+               end
+      # Validate that the method passed is supported
+      unless %w(get post).include?(method)
+        raise "Unsupported method '#{method}' passed for load_override_url, supported methods are GET and POST"
+      end
+      # Parse header data from
+      headers = hash['header']
+      body = hash['body']
       case method
       when 'post'
-      begin
-        apiurl = node.run_state['apiurl'].to_s
-        token = node.run_state['api_auth_token']['token']
-        # POST body object as ruby hash
-        object = {
-          'ci' => hostname,
-          'patch_status' => node.run_state['epm']['patch_status'],
-          'request' => node.run_state['epm']['patch_request_number'],
-        }
-        if details
-          object['client_status_detail'] = details
+        begin
+          # Parse the body and prepare to send it
+          body_object = if headers =~ %r{application/json} || JSON.parse(body)
+                          puts 'Converting body argument to JSON type'
+                          JSON.parse(body)
+                        else
+                          puts 'Treating body as STRING'
+                          body.to_s
+                        end
+          http = Net::HTTP.new(url.host, url.port)
+          http.use_ssl = true if http.port.to_s =~ /443/
+          req = Net::HTTP::Post.new(url)
+          # Add the header objects to the req object
+          req = req.merge(headers)
+          req.body = body_object
+          JSON.parse(http.request(req).body)
+        rescue => err
+          # TODO: add logic for a retry of status POST
+          puts
+          puts 'There was an error sending POST to load_override_url'
+          puts err
         end
-        url = URI("#{apiurl}/epm/patch_data/ci/#{clean_hostname()}")
-        http = Net::HTTP.new(url.host, url.port)
-        http.use_ssl = true if http.port.to_s.include?('443')
-        req = Net::HTTP::Post.new(url)
-        req['Authorization'] = ["Bearer #{token}"]
-        req['Content-Type'] = ['application/json']
-        req.body = object.to_json
-        http.request(req)
-      rescue
-        # TODO: add logic for a retry of status POST
-        puts
-        puts 'There was an error sending POST to EPM API with status update'
-      end
-      when get
-      begin
-        node.run_state['epm'] = {} unless node.run_state['epm']
-        apiurl = node.run_state['apiurl'].to_s
-        token = node.run_state['api_auth_token']['token']
-        uri = URI("#{apiurl}/epm/enrollment/ci/#{clean_hostname()}")
-        headers = { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true if http.port.to_s.include?('443')
-        req = http.get(uri, headers)
-        epm_api_response = if req.code.to_i == 200
-                             JSON.parse(req.body)
-                           else
-                             []
-                           end
-      rescue
-        epm_api_response = []
-      end
+      when 'get'
+        begin
+          http = Net::HTTP.new(url.host, url.port)
+          http.use_ssl = true if http.port.to_s =~ /443/
+          req = http.get(url, headers)
+          JSON.parse(req.body)
+        rescue => err
+          puts
+          puts 'There was an error sending GET to load_override_url'
+          puts err
+        end
       else
         puts "method #{method} was specified but no action exists for this method.  Did you mean get/put/post?"
+      end
     end
 
     # This will extract a value from an override file and compare it
