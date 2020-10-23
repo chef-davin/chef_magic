@@ -32,3 +32,12 @@ end
     log "#{node['override_yaml']}"
   end
 end
+
+log 'Fetching JSON data from a URL as input values.'
+url_override_hash = load_override_url({
+  'url' => 'https://raw.githubusercontent.com/chef-davin/chef_magic/main/test/cookbooks/test/files/override_file.json',
+  'method' => 'GET',
+  'header' => { 'Content-Type' => 'application/json', 'Accept' => 'application/json' },
+  'body' => '' })
+merge_override_hash(url_override_hash, node.default['override_from_url'])
+log "#{node['override_from_url']}"

@@ -88,33 +88,33 @@
         #   env:
         #     CHEF_LICENSE: accept-no-persist
 
-    macos:
-      needs: [delivery]
-      runs-on: macos-10.15
-      strategy:
-        matrix:
-          os:
-            - macos-10.15
-          suite:
-            - 'macos'
-        fail-fast: false
-      steps:
-        - name: Check out code
-          uses: actions/checkout@master
-        - name: install homebrew
-          run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-          shell: bash
-        - name: Install Chef Workstation
-          run: brew cask install chef-workstation
-          shell: bash
-        - name: Add Chef Workstation to PATH
-          run: echo "##[add-path]\opscode\chef-workstation\bin\;"
-          shell: bash
-        - name: Chef Infra Client Run
-          run: chef-solo -c test/solo.rb -o "test::${{ matrix.suite }}"
-          shell: bash
-          env:
-            CHEF_LICENSE: accept-no-persist
+    # macos:
+    #   needs: [delivery]
+    #   runs-on: macos-10.15
+    #   strategy:
+    #     matrix:
+    #       os:
+    #         - macos-10.15
+    #       suite:
+    #         - 'macos'
+    #     fail-fast: false
+    #   steps:
+    #     - name: Check out code
+    #       uses: actions/checkout@master
+    #     - name: install homebrew
+    #       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    #       shell: bash
+    #     - name: Install Chef Workstation
+    #       run: brew cask install chef-workstation
+    #       shell: bash
+    #     - name: Add Chef Workstation to PATH
+    #       run: echo "##[add-path]\opscode\chef-workstation\bin\;"
+    #       shell: bash
+    #     - name: Chef Infra Client Run
+    #       run: chef-solo -c test/solo.rb -o "test::${{ matrix.suite }}"
+    #       shell: bash
+    #       env:
+    #         CHEF_LICENSE: accept-no-persist
         # - name: Integration Testing
         #   run: inspec exec test/integration/${{ matrix.suite }}/default_spec.rb
         #   shell: bash

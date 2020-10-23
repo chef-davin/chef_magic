@@ -44,6 +44,49 @@ registry_key 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Polic
 end
 ```
 
+### `load_override_url(hash)`
+
+Reads hash attributes which are passed and retrieves override values in JSON format from a target URL that can then be referenced in your recipe.
+
+The `load_override_url` method expects arguments to be passed as a Ruby hash, with some keys being optional depending on the call which needs to be made.
+
+```ruby
+load_override_url({
+  'url'     => 'http://some.web.site/uridata?optional=parameters',
+  'method'  => 'GET',
+  'header'  => { 'Content-Type' => 'application/json' },
+  'body'    => { 'some_key' => 'some_value' }
+})
+# url:      Required - Full URL including protocol to invoke.
+# method:   Optional - GET or POST method, will default to GET if no body is present and POST if a body is present.
+# header:   Optional - header data in hash(key=>value) format for JSON or string format to be passed to URL.
+# body:     Optional - body contents to be passed to url in STRING format.
+
+# If only performing a GET with no other options needed, the request could look like this:
+load_override_url({ 'url' => 'http://some.web.site/uridata?optional=parameters' })
+```
+
+**Load a hash variable, and use an if block to load the override value over the node value**:
+
+```ruby
+system_overrides['base_recipe'] = load_override_url({
+                                    'url'     => 'https://some-api.site:8443/data',
+                                    'method'  => 'POST',
+                                    'header'  => { 'Content-Type' => 'application/json', 'Accept' => 'application/json' },
+                                    'body'    => { 'some_key' => 'some_value' } })
+
+enablelua_value = if system_overrides['base_recipe']['registry_keys'].key?('enable_lua')
+                    system_overrides['base_recipe']['registry_keys']['enable_lua']
+                  else
+                    node['base_recipe']['registry_keys']['enable_lua']
+                  end
+
+registry_key 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' do
+  values [{ name: 'EnableLUA', type: :dword, data: enablelua_value }]
+  action :create
+end
+```
+
 ### `get_override_file_value(first_node_hash_key, first_override_hash_key, desired_hash_key, [override_file])`
 
 This will extract a value from an override file and compare it to a value of the same key from the node object. If the override key/value exists, this will return the value from the overrides file rather than the corresponding node object.
