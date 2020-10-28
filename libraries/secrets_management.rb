@@ -79,7 +79,7 @@ module ChefMagic
       this_vault.each do |secret|
         secret_name = secret['id'].split('/')[-1]
         secret_value = akv_fetch_secret_with_token(token, vault, secret_name)
-        my_vault[secret_name]= secret_value
+        my_vault[secret_name] = secret_value
       end
       my_vault
     end
