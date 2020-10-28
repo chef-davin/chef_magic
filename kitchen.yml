@@ -75,12 +75,12 @@ suites:
       tenant_id: <%= ENV['AZK_TENANT_ID'] %>
       subscription_id: <%= ENV['AZK_SUBSCRIPTION_ID'] %>
 
-- name: macos
-  named_run_list: macos
-  includes: ["macos-10.15"]
-  attributes:
-    akv_test:
-      client_id: <%= ENV['AZK_CLIENT_ID'] %>
-      client_secret: <%= ENV['AZK_CLIENT_SECRET'] %>
-      tenant_id: <%= ENV['AZK_TENANT_ID'] %>
-      subscription_id: <%= ENV['AZK_SUBSCRIPTION_ID'] %>
+# - name: macos
+#   named_run_list: macos
+#   includes: ["macos-10.15"]
+  # attributes:
+  #   akv_test:
+  #     client_id: <%= ENV['AZK_CLIENT_ID'] %>
+  #     client_secret: <%= ENV['AZK_CLIENT_SECRET'] %>
+  #     tenant_id: <%= ENV['AZK_TENANT_ID'] %>
+  #     subscription_id: <%= ENV['AZK_SUBSCRIPTION_ID'] %>
