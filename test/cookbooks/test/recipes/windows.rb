@@ -4,7 +4,7 @@ chef_gem 'vault' do
 end
 
 node.default['akv_test']['token'] = akv_token(node['akv_test']['client_id'], node['akv_test']['client_secret'], node['akv_test']['tenant_id'])
-# log node['akv_test']['token']
+log node['akv_test']['token']
 my_vault = akv_fetch_vault_secrets(node['akv_test']['token'], 'chef-magic-akv-test')
 log my_vault
 log "the secret to my secret_key 'chef-magic-test-secret': #{my_vault['chef-magic-test-secret'].to_s}"
