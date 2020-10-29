@@ -80,7 +80,7 @@ action_class do
     if yaml_contents != ''
       hash = ::YAML.load_file(yaml_contents)
       if hash == false
-        ::Chef::log.warn("Your waiver file has corrupted yaml, we will be overwriting it")
+        ::Chef.log.warn('Your waiver file has corrupted yaml, we will be overwriting it')
         hash = ::YAML.safe_load(yaml_contents)
       end
       hash
