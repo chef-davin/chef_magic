@@ -48,15 +48,39 @@ suites:
 # - name: bsd
 #   named_run_list: bsd
 #   includes: ["freebsd-12"]
+  # attributes:
+  #   akv_test:
+  #     client_id: <%= ENV['AZK_CLIENT_ID'] %>
+  #     client_secret: <%= ENV['AZK_CLIENT_ID'] %>
+  #     tenant_id: <%= ENV['AZK_CLIENT_ID'] %>
+  #     subscription_id: <%= ENV['AZK_SUBSCRIPTION_ID'] %>
 
 - name: linux
   named_run_list: linux
   excludes: ["windows-2012r2-13", "windows-2012r2-14", "windows-2016", "windows-2019", "macos-10.15", "freebsd-12"]
+  attributes:
+    akv_test:
+      client_id: <%= ENV['AZK_CLIENT_ID'] %>
+      client_secret: <%= ENV['AZK_CLIENT_SECRET'] %>
+      tenant_id: <%= ENV['AZK_TENANT_ID'] %>
+      subscription_id: <%= ENV['AZK_SUBSCRIPTION_ID'] %>
 
 - name: windows
   named_run_list: windows
   includes: ["windows-2012r2-13", "windows-2012r2-14", "windows-2016", "windows-2019"]
+  attributes:
+    akv_test:
+      client_id: <%= ENV['AZK_CLIENT_ID'] %>
+      client_secret: <%= ENV['AZK_CLIENT_SECRET'] %>
+      tenant_id: <%= ENV['AZK_TENANT_ID'] %>
+      subscription_id: <%= ENV['AZK_SUBSCRIPTION_ID'] %>
 
 # - name: macos
 #   named_run_list: macos
 #   includes: ["macos-10.15"]
+  # attributes:
+  #   akv_test:
+  #     client_id: <%= ENV['AZK_CLIENT_ID'] %>
+  #     client_secret: <%= ENV['AZK_CLIENT_SECRET'] %>
+  #     tenant_id: <%= ENV['AZK_TENANT_ID'] %>
+  #     subscription_id: <%= ENV['AZK_SUBSCRIPTION_ID'] %>

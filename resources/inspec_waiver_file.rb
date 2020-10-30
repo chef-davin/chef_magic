@@ -72,8 +72,18 @@ end
 
 action_class do
   def load_waiver_file_to_hash(file_name)
-    if ::File.exist?(file_name)
-      ::YAML.load_file(file_name)
+    yaml_contents = if ::File.file?(file_name) && ::File.readable?(file_name) && !::File.zero?(file_name)
+                      IO.read(new_resource.file)
+                    else
+                      ''
+                    end
+    if yaml_contents != ''
+      hash = ::YAML.load_file(yaml_contents)
+      if hash == false
+        ::Chef.log.warn('Your waiver file has corrupted yaml, we will be overwriting it')
+        hash = ::YAML.safe_load(yaml_contents)
+      end
+      hash
     else
       {}
     end
