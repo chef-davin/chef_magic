@@ -1,9 +1,7 @@
-# To learn more about Custom Resources, see https://docs.chef.io/custom_resources/
 require 'yaml'
 require 'date'
 
 provides :inspec_waiver_file
-resource_name :inspec_waiver_file
 unified_mode true
 
 description 'Use the **inspec_waiver_file** resource to add or remove entries from an inspec waiver file. This can be used in conjunction with the audit cookbook'
@@ -48,7 +46,8 @@ action :add do
 
     file "Update Waiver File #{new_resource.file} to update waiver for control #{new_resource.control}" do
       path new_resource.file
-      content waiver_hash.to_yaml
+      # content waiver_hash.to_yaml
+      content YAML.dump(waiver_hash)
       backup new_resource.backup
       action :create
     end
@@ -63,7 +62,8 @@ action :remove do
     waiver_hash = waiver_hash.sort.to_h
     file "Update Waiver File #{new_resource.file} to remove waiver for control #{new_resource.control}" do
       path new_resource.file
-      content waiver_hash.to_yaml
+      # content waiver_hash.to_yaml
+      content YAML.dump(waiver_hash)
       backup new_resource.backup
       action :create
     end
@@ -72,20 +72,19 @@ end
 
 action_class do
   def load_waiver_file_to_hash(file_name)
-    yaml_contents = if ::File.file?(file_name) && ::File.readable?(file_name) && !::File.zero?(file_name)
-                      IO.read(new_resource.file)
-                    else
-                      ''
-                    end
-    if yaml_contents != ''
-      hash = ::YAML.load_file(yaml_contents)
-      if hash == false
-        ::Chef.log.warn('Your waiver file has corrupted yaml, we will be overwriting it')
-        hash = ::YAML.safe_load(yaml_contents)
+    if file_name =~ %r{(/|C:\\).*(.yaml|.yml)}i
+      if ::File.exist?(file_name)
+        hash = ::YAML.load_file(file_name)
+        if hash == false || hash.nil? || hash == ''
+          {}
+        else
+          ::YAML.load_file(file_name)
+        end
+      else
+        {}
       end
-      hash
     else
-      {}
+      raise "Waivers file needs to be a YAML file which should have a .yaml or .yml extension -\"#{file_name}\" does not have an appropriate extension"
     end
   end
 end
