@@ -19,9 +19,9 @@ log "the secret to my secret_key 'secrets-tests-jobs-done': #{my_vault['secrets-
   override_hash = load_override_file(override_file)
 
   log "Using the #{i.upcase} override file and `get_override_file_value` method"
-  log "#{get_override_file_value('linux_rd', 'override', 'favorsthebold', override_file)}"
-  log "#{get_override_file_value('linux_rd', 'override', 'on_a_tuesday', override_file)}"
-  log "#{get_override_file_value('linux_rd', 'override', 'things', override_file)}"
+  log "#{get_override_file_value('rd_test', 'override', 'favorsthebold', override_file)}"
+  log "#{get_override_file_value('rd_test', 'override', 'on_a_tuesday', override_file)}"
+  log "#{get_override_file_value('rd_test', 'override', 'things', override_file)}"
 
   log "Using the #{i.upcase} override file and `merge_override_hash` method to create node['override_#{i}']"
   case i.upcase
@@ -48,4 +48,3 @@ url_override_hash = load_override_url({
   'body' => '' })
 merge_override_hash(url_override_hash, node.default['override_from_url'])
 log "#{node['override_from_url']}"
-
