@@ -2,6 +2,7 @@ require 'yaml'
 require 'date'
 
 provides :create_az_credentials_file
+unified_mode true
 
 property :file_directory, String, defaults: windows? ? 'C:\.azure' : '/root/.azure'
 property :subscription_id, String, required: true
