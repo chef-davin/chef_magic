@@ -23,7 +23,7 @@ require 'tomlrb'
 
 module ChefMagic
   module SecretsManagementHelpers
-    def get_azure_managed_id_token
+    def get_akv_managed_id_token
       token_uri = URI.parse('http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net')
       headers = { 'Metadata' => 'true' }
       http = Net::HTTP.new(token_uri.host, token_uri.port)
