@@ -23,6 +23,16 @@ require 'tomlrb'
 
 module ChefMagic
   module SecretsManagementHelpers
+    def get_azure_managed_id_token
+      token_uri = URI.parse('http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net')
+      headers = { 'Metadata' => 'true' }
+      http = Net::HTTP.new(token_uri.host, token_uri.port)
+      http.use_ssl = false
+      req = http.get(token_uri, headers)
+      body = JSON.parse(req.body)
+      body['access_token']
+    end
+
     def akv_token(client_id, client_secret, tenant)
       token_uri = URI.parse("https://login.microsoftonline.com/#{tenant}/oauth2/token")
       resource = 'https://vault.azure.net'
