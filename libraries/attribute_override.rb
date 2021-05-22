@@ -179,6 +179,27 @@ module ChefMagic
         default_attribute
       end
     end
+
+    # This will extract a value from an override hash and compare it
+    #   to a value of the same key from the node object. If the override
+    #   key/value exists, this will return the value from the overrides hash
+    #   rather than the corresponding node object.
+    # This is designed to be used in conjunction with the load_override_file() method.
+    def get_override_hash_value(node_hash, override_hash, desired_key)
+      # Query the hash of the node object to find the value of the desired attribute
+      default_attribute = find_hash_value(node_hash, desired_key)
+
+      # Query the hash of the override hash object to find the value of the desired attribute
+      override_attribute = find_hash_value(override_hash, desired_key)
+
+      # If the override attribute doesn't exist, return the attribute from the node object
+      #   if it does exist, return the object from the override hash.
+      if override_attribute.nil?
+        default_attribute
+      else
+        override_attribute
+      end
+    end
   end
 end
 
