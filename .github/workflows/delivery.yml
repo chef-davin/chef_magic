@@ -5,16 +5,16 @@
     pull_request:
     push:
       branches:
-        - master
+        - main
 
   jobs:
     delivery:
       runs-on: ubuntu-latest
       steps:
         - name: Check out code
-          uses: actions/checkout@master
+          uses: actions/checkout@main
         - name: Run Chef Delivery
-          uses: actionshub/chef-delivery@master
+          uses: actionshub/chef-delivery@main
           env:
             CHEF_LICENSE: accept-no-persist
 
@@ -28,7 +28,7 @@
             - 'debian-10'
             - 'centos-6'
             - 'centos-7'
-            - 'centos-8'
+            - 'alma-8'
             - 'fedora-latest'
             # - 'freebsd-12'
             - 'ubuntu-1604'
@@ -45,11 +45,11 @@
 
       steps:
         - name: Check out code
-          uses: actions/checkout@master
+          uses: actions/checkout@main
         - name: Install Chef
-          uses: actionshub/chef-install@master
+          uses: actionshub/chef-install@main
         - name: Dokken
-          uses: actionshub/kitchen-dokken@master
+          uses: actionshub/kitchen-dokken@main
           env:
             CHEF_LICENSE: accept-no-persist
             KITCHEN_LOCAL_YAML: kitchen.dokken.yml
@@ -74,7 +74,7 @@
         fail-fast: false
       steps:
         - name: Check out code
-          uses: actions/checkout@master
+          uses: actions/checkout@main
         - name: Install Chef Workstation
           run: . { iwr -useb https://omnitruck.chef.io/install.ps1 } | iex; install -channel stable -project chef-workstation
           shell: powershell
@@ -112,9 +112,9 @@
     #     fail-fast: false
     #   steps:
     #     - name: Check out code
-    #       uses: actions/checkout@master
+    #       uses: actions/checkout@main
     #     - name: install homebrew
-    #       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    #       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/main/install.sh)"
     #       shell: bash
     #     - name: Install Chef Workstation
     #       run: brew cask install chef-workstation
